@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat  = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model SourceLink {
+  id            String   @id @default(uuid())
+  sourceCode    String   @unique
+  category      String
+  name          String
+  url           String
+  country       String?
+  city          String?
+  contactType   String?
+  fit           String?
+  priority      Int      @default(3)
+  enabled       Boolean  @default(true)
+
+  lastCrawledAt DateTime?
+  crawlStatus   String?
+  errorMessage  String?
+
+  rawPages      RawPage[]
+  opportunities Opportunity[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+  @@index([priority])
+  @@index([enabled])
+}
+
+model RawPage {
+  id          String   @id @default(uuid())
+  sourceId    String
+  source      SourceLink @relation(fields: [sourceId], references: [id])
+
+  url         String
+  finalUrl    String?
+  title       String?
+  html        String?  @db.Text
+  text        String   @db.Text
+  contentHash String
+  statusCode  Int?
+  errorMessage String?
+
+  scrapedAt   DateTime @default(now())
+
+  opportunities Opportunity[]
+
+  @@unique([sourceId, contentHash])
+  @@index([sourceId])
+  @@index([url])
+}
+
+model Opportunity {
+  id              String   @id @default(uuid())
+
+  sourceId        String
+  source          SourceLink @relation(fields: [sourceId], references: [id])
+
+  rawPageId       String?
+  rawPage         RawPage? @relation(fields: [rawPageId], references: [id])
+
+  title           String
+  organization    String?
+  opportunityType String?
+
+  description     String   @db.Text
+  danceStyles     String[]
+  locationText    String?
+  city            String?
+  country         String?
+
+  requirements    Json?
+  compensation    Json?
+
+  applicationUrl  String?
+  contactEmail    String?
+  contactPhone    String?
+
+  deadline        DateTime?
+  eventStartDate  DateTime?
+  eventEndDate    DateTime?
+
+  confidence        Float    @default(0)
+  completenessScore Float    @default(0)
+  missingFields     String[]
+
+  rawUrl          String
+  canonicalKey    String   @unique
+  status          String   @default("new")
+
+  extractedAt     DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  recommendations Recommendation[]
+
+  @@index([sourceId])
+  @@index([city])
+  @@index([country])
+  @@index([status])
+}
+
+model Dancer {
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String?
+  phone           String?
+
+  city            String?
+  country         String?
+
+  danceStyles     String[]
+  preferredTypes  String[]
+
+  skillLevel      String?
+  yearsExperience Int?
+
+  availability    Json?
+  travelRadiusKm  Int?
+
+  minCompensation Float?
+  currency        String?
+
+  portfolioUrls   String[]
+  languages       String[]
+
+  profileDescription     String?  @db.Text
+  isActive        Boolean  @default(true)
+  recommendations Recommendation[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Recommendation {
+  id                 String   @id @default(uuid())
+
+  opportunityId      String
+  opportunity        Opportunity @relation(fields: [opportunityId], references: [id])
+
+  dancerId           String
+  dancer             Dancer @relation(fields: [dancerId], references: [id])
+
+  finalScore         Float
+  styleScore         Float?
+  locationScore      Float?
+  typeScore          Float?
+  availabilityScore  Float?
+  experienceScore    Float?
+  compensationScore  Float?
+
+  reason             String?  @db.Text
+  risks              String[]
+  suggestedMessage   String?  @db.Text
+
+  status             String   @default("pending_review")
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([opportunityId, dancerId])
+  @@index([opportunityId])
+  @@index([dancerId])
+  @@index([status])
+  @@index([finalScore])
+}
