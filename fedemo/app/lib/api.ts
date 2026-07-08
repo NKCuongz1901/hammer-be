@@ -1,5 +1,6 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  'https://hammer-be.onrender.com/api/v1';
 
 export interface Paginated<T> {
   data: T[];
@@ -54,7 +55,7 @@ export interface OpportunityCompensation {
 
 export function parseJsonField<T>(value: unknown): T | null {
   if (value === null || value === undefined) return null;
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     try {
       return JSON.parse(value) as T;
     } catch {
@@ -164,7 +165,7 @@ async function getList<T>(
   itemsPerPage: number,
 ): Promise<Paginated<T>> {
   const url = `${API_BASE_URL}/${path}?page=${page}&itemsPerPage=${itemsPerPage}`;
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: 'no-store' });
 
   if (!res.ok) {
     throw new Error(`Request failed with status ${res.status}`);
@@ -175,7 +176,7 @@ async function getList<T>(
 
 async function getById<T>(path: string, id: string): Promise<T | null> {
   const res = await fetch(`${API_BASE_URL}/${path}/${id}`, {
-    cache: "no-store",
+    cache: 'no-store',
   });
 
   if (res.status === 404) {
@@ -195,31 +196,31 @@ async function getById<T>(path: string, id: string): Promise<T | null> {
 }
 
 export function fetchOpportunities(page: number, itemsPerPage: number) {
-  return getList<Opportunity>("opportunity", page, itemsPerPage);
+  return getList<Opportunity>('opportunity', page, itemsPerPage);
 }
 
 export function fetchSourceLinks(page: number, itemsPerPage: number) {
-  return getList<SourceLink>("source-links", page, itemsPerPage);
+  return getList<SourceLink>('source-links', page, itemsPerPage);
 }
 
 export function fetchOpportunityById(id: string) {
-  return getById<OpportunityDetail>("opportunity", id);
+  return getById<OpportunityDetail>('opportunity', id);
 }
 
 export function fetchSourceLinkById(id: string) {
-  return getById<SourceLinkDetail>("source-links", id);
+  return getById<SourceLinkDetail>('source-links', id);
 }
 
 export function fetchDancers(page: number, itemsPerPage: number) {
-  return getList<Dancer>("dancer", page, itemsPerPage);
+  return getList<Dancer>('dancer', page, itemsPerPage);
 }
 
 export function fetchDancerById(id: string) {
-  return getById<DancerDetail>("dancer", id);
+  return getById<DancerDetail>('dancer', id);
 }
 
 async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}/${path}`, { cache: "no-store" });
+  const res = await fetch(`${API_BASE_URL}/${path}`, { cache: 'no-store' });
   if (!res.ok) {
     throw new Error(`Request failed with status ${res.status}`);
   }
@@ -231,17 +232,19 @@ export function fetchDancerRecommendations(id: string) {
 }
 
 export function fetchRecommendations(page: number, itemsPerPage: number) {
-  return getList<Recommendation>("recommendations", page, itemsPerPage);
+  return getList<Recommendation>('recommendations', page, itemsPerPage);
 }
 
 export function fetchRecommendationById(id: string) {
-  return getById<Recommendation>("recommendations", id);
+  return getById<Recommendation>('recommendations', id);
 }
 
-export async function fetchDraftEmail(recommendationId: string): Promise<string> {
+export async function fetchDraftEmail(
+  recommendationId: string,
+): Promise<string> {
   const res = await fetch(
     `${API_BASE_URL}/recommendations/${recommendationId}/draft-email`,
-    { cache: "no-store" },
+    { cache: 'no-store' },
   );
 
   if (!res.ok) {
