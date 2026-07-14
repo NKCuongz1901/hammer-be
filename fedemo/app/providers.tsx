@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import { Theme } from "@astryxdesign/core/theme";
-import { neutralTheme } from "@astryxdesign/theme-neutral/built";
-import { AppShell } from "@astryxdesign/core/AppShell";
+import { usePathname } from 'next/navigation';
+import { Theme } from '@astryxdesign/core/theme';
+import { neutralTheme } from '@astryxdesign/theme-neutral/built';
+import { AppShell } from '@astryxdesign/core/AppShell';
 import {
   SideNav,
   SideNavHeading,
   SideNavItem,
   SideNavSection,
-} from "@astryxdesign/core/SideNav";
+} from '@astryxdesign/core/SideNav';
 
 const NAV_ITEMS = [
-  { label: "Opportunities", href: "/opportunity", icon: "calendar" },
-  { label: "Source Links", href: "/source-links", icon: "externalLink" },
-  { label: "Dancers", href: "/dancer", icon: "search" },
-  { label: "Recommendations", href: "/recommendation", icon: "check" },
+  { label: 'Source Links', href: '/source-links', icon: 'externalLink' },
+  { label: 'Opportunities', href: '/opportunity', icon: 'calendar' },
+  { label: 'Dancers', href: '/dancer', icon: 'search' },
+  { label: 'Recommendations', href: '/recommendation', icon: 'check' },
 ] as const;
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -26,9 +26,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AppShell
         contentPadding={6}
         sideNav={
-          <SideNav
-            header={<SideNavHeading heading="Hammer" headingHref="/" />}
-          >
+          <SideNav header={<SideNavHeading heading="Hammer" headingHref="/" />}>
             <SideNavSection title="Data" isHeaderHidden>
               {NAV_ITEMS.map((item) => (
                 <SideNavItem
